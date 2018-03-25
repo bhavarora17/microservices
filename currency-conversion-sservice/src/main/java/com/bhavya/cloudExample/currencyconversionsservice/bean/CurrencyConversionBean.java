@@ -10,6 +10,15 @@ public class CurrencyConversionBean {
     BigDecimal conversionMultiple;
     BigDecimal quantity;
     int port;
+
+    public BigDecimal getTotalCalculatedAmount() {
+        return totalCalculatedAmount;
+    }
+
+    public void setTotalCalculatedAmount(BigDecimal totalCalculatedAmount) {
+        this.totalCalculatedAmount = totalCalculatedAmount;
+    }
+
     BigDecimal totalCalculatedAmount;
 
     public CurrencyConversionBean() {

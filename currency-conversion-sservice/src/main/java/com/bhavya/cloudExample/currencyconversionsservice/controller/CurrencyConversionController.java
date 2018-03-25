@@ -1,6 +1,8 @@
 package com.bhavya.cloudExample.currencyconversionsservice.controller;
 
 import com.bhavya.cloudExample.currencyconversionsservice.bean.CurrencyConversionBean;
+import com.bhavya.cloudExample.currencyconversionsservice.feign_proxy.CurrencyExchangeServiceProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,15 +16,13 @@ import java.util.Map;
 @RestController
 public class CurrencyConversionController {
 
-    @GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
+    @Autowired
+    private CurrencyExchangeServiceProxy proxy;
+
+    @GetMapping("/currency-converter-feign/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversionBean currencyConversionController(@PathVariable String from, @PathVariable String to, @PathVariable BigDecimal quantity){
 
-        Map<String, String> uriVariables =  new HashMap<>();
-        uriVariables.put("from", from);
-        uriVariables.put("to", to);
-        ResponseEntity<CurrencyConversionBean> responseEntity = new RestTemplate().getForEntity("http://localhost:8000/currency-exchange/from/{from}/to/{to}",
-                CurrencyConversionBean.class, uriVariables);
-        CurrencyConversionBean response = responseEntity.getBody();
+        CurrencyConversionBean response = proxy.retreiveExchangeValue(from, to);
         return new CurrencyConversionBean(response.getId(),from, to, response.getConversionMultiple(), quantity, quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
 }
